@@ -1,0 +1,6 @@
+@CentralHub.WebAPI_HostAddress = http://localhost:5162
+
+GET {{CentralHub.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
