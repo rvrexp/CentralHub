@@ -1,4 +1,7 @@
-﻿namespace CentralHub.Application.Interfaces
+﻿
+
+
+namespace CentralHub.Application.Interfaces
 {
 
     /// <summary>
