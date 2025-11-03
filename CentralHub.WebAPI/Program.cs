@@ -1,6 +1,7 @@
 using CentralHub.Application;
 using CentralHub.Application.Interfaces;
 using CentralHub.Infrastructure.Data;
+using CentralHub.WebAPI.Middleware;
 using CentralHub.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+//Custom middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
