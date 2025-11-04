@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using CentralHub.Application.Common.Behaviors;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -15,6 +17,8 @@ namespace CentralHub.Application
             // Registers MediatR and finds command/query handlers in this assembly
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             return services;
         }
