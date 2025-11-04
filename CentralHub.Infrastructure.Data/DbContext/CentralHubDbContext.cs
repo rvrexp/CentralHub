@@ -1,9 +1,12 @@
 ﻿using CentralHub.Core.Domain.Aggregates.ClientAggregate;
+using CentralHub.Core.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CentralHub.Infrastructure.Data.DbContext
 {
-    public class CentralHubDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class CentralHubDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
         public CentralHubDbContext(DbContextOptions<CentralHubDbContext> options) : base(options) { }
 
@@ -12,9 +15,11 @@ namespace CentralHub.Infrastructure.Data.DbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Tells EF Core to build all the
+            // Identity tables (AspNetUsers, AspNetRoles, etc.).
             base.OnModelCreating(modelBuilder);
 
-            // --- Configuration for Client Aggregate ---
+            // Configuration for Client Aggregate 
             modelBuilder.Entity<Client>(client =>
             {
                 client.ToTable("Clients");
@@ -52,6 +57,14 @@ namespace CentralHub.Infrastructure.Data.DbContext
                     });
                 });
             });
+            // (Optional but good practice) Customize Identity table names if you don't like "AspNet..."
+            modelBuilder.Entity<ApplicationUser>(b => b.ToTable("Users"));
+            modelBuilder.Entity<IdentityRole<Guid>>(b => b.ToTable("Roles"));
+            modelBuilder.Entity<IdentityUserRole<Guid>>(b => b.ToTable("UserRoles"));
+            modelBuilder.Entity<IdentityUserClaim<Guid>>(b => b.ToTable("UserClaims"));
+            modelBuilder.Entity<IdentityUserLogin<Guid>>(b => b.ToTable("UserLogins"));
+            modelBuilder.Entity<IdentityRoleClaim<Guid>>(b => b.ToTable("RoleClaims"));
+            modelBuilder.Entity<IdentityUserToken<Guid>>(b => b.ToTable("UserTokens"));
         }
     }
 }
