@@ -1,8 +1,8 @@
 ﻿using CentralHub.Application.Interfaces;
+using System.Security.Claims;
 
 namespace CentralHub.WebAPI.Services
 {
-    // Placeholder implementation for ICurrentUserService
     public class CurrentUserService : ICurrentUserService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -12,21 +12,27 @@ namespace CentralHub.WebAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // --- AUTHENTICATION NOT YET IMPLEMENTED ---
-        public Guid TenantId => GetDemoTenantId();
-        public Guid UserId => GetDemoUserId();
-        public string? Email => "demo-user@centralhub.com";
-
-        private Guid GetDemoTenantId()
+        // Read the User ID (sub) claim from the token
+        public Guid UserId
         {
-            // Placeholder logic, returns a hardcoded Guid for now
-            return new Guid("11111111-1111-1111-1111-111111111111");
+            get
+            {
+                var id = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+                return Guid.TryParse(id, out var userId) ? userId : Guid.Empty;
+            }
         }
 
-        private Guid GetDemoUserId()
+        // Read custom "tenant_id" claim from the token
+        public Guid TenantId
         {
-            // Placeholder logic
-            return new Guid("22222222-2222-2222-2222-222222222222");
+            get
+            {
+                var id = _httpContextAccessor.HttpContext?.User?.FindFirstValue("tenant_id");
+                return Guid.TryParse(id, out var tenantId) ? tenantId : Guid.Empty;
+            }
         }
+
+        // Read the Email claim from the token
+        public string? Email => _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
     }
 }

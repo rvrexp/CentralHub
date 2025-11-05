@@ -2,6 +2,10 @@
 using CentralHub.Core.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CentralHub.WebAPI.Controllers
 {
@@ -11,11 +15,13 @@ namespace CentralHub.WebAPI.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IConfiguration _configuration;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         // POST /api/accounts/register
@@ -51,7 +57,6 @@ namespace CentralHub.WebAPI.Controllers
 
             return Ok(new AuthResponseDto { IsSuccess = true, Message = "User registered successfully." });
         }
-
         // POST /api/accounts/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
@@ -69,9 +74,39 @@ namespace CentralHub.WebAPI.Controllers
                 return Unauthorized(new AuthResponseDto { IsSuccess = false, Message = "Invalid email or password." });
             }
 
+            // --- User is valid, generate token ---
+            var token = GenerateJwtToken(user); // Call our new method
 
-            // For now, a successful login just returns a 200 OK.
-            return Ok(new AuthResponseDto { IsSuccess = true, Message = "Login successful." });
+            return Ok(new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Login successful.",
+                Token = token // Return the token
+            });
+        }
+        private string GenerateJwtToken(ApplicationUser user)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            // These are the "claims" that will be in the token.
+            // This is the data our CurrentUserService will read.
+            var claims = new[]
+            {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject (User ID)
+        new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Token ID
+        new Claim("tenant_id", user.TenantId.ToString()) // Our custom TenantId claim
+    };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1), // Token is valid for 1 hour
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
