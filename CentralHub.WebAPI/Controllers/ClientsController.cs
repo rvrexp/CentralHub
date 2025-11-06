@@ -1,4 +1,5 @@
 ﻿using CentralHub.Application.Features.Clients.Commands.CreateClient;
+using CentralHub.Application.Features.Clients.Commands.UpdateClient;
 using CentralHub.Application.Features.Clients.Queries.GetAllClients;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
 using CentralHub.Application.Interfaces;
@@ -64,6 +65,22 @@ namespace CentralHub.WebAPI.Controllers
             // The query object will be bound from query string parameters (e.g., ?pageNumber=1&pageSize=10)
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+        // PUT /api/clients/{id}
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateClient(Guid id, [FromBody] UpdateClientCommand command)
+        {
+            // 1. Manually set the Id from the route, as it's not in the body
+            command.Id = id;
+
+            // 2. Send the command to the handler
+            await _mediator.Send(command);
+
+            // 3. Return a 204 No Content, which is the standard for a successful PUT
+            return NoContent();
         }
     }
 }
