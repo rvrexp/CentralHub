@@ -42,7 +42,11 @@ namespace CentralHub.Application.Interfaces
         // and are implicitly handled when SaveChangesAsync is called. Explicit methods
         // can be added if specific logic beyond simple tracking is needed.
 
-
+        /// <summary>
+        /// Marks a client aggregate for deletion.
+        /// </summary>
+        /// <param name="client">The client aggregate to delete.</param>
+        void Delete(Client client);
 
     }
 }
