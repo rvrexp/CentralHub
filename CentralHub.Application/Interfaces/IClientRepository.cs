@@ -48,5 +48,6 @@ namespace CentralHub.Application.Interfaces
         /// <param name="client">The client aggregate to delete.</param>
         void Delete(Client client);
 
+
     }
 }
