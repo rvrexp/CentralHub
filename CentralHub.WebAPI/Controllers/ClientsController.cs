@@ -1,4 +1,5 @@
 ﻿using CentralHub.Application.Features.Clients.Commands.CreateClient;
+using CentralHub.Application.Features.Clients.Commands.DeleteClient;
 using CentralHub.Application.Features.Clients.Commands.UpdateClient;
 using CentralHub.Application.Features.Clients.Queries.GetAllClients;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
@@ -80,6 +81,20 @@ namespace CentralHub.WebAPI.Controllers
             await _mediator.Send(command);
 
             // 3. Return a 204 No Content, which is the standard for a successful PUT
+            return NoContent();
+        }
+        // DELETE /api/clients/{id}
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteClient(Guid id)
+        {
+            // Create the command with the ID from the route
+            var command = new DeleteClientCommand(id);
+
+            await _mediator.Send(command);
+
+            // Return a 204 No Content, which is the standard for a successful DELETE
             return NoContent();
         }
     }

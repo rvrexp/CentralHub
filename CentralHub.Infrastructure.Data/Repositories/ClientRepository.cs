@@ -79,5 +79,11 @@ namespace CentralHub.Infrastructure.Data.Repositories
                 PageSize = pageSize
             };
         }
+        public void Delete(Client client)
+        {
+            // EF Core will track that this entity is to be deleted.
+            // The Unit of Work will handle the actual database command.
+            _dbContext.Clients.Remove(client);
+        }
     }
 }
