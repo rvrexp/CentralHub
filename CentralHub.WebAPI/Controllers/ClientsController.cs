@@ -1,4 +1,5 @@
-﻿using CentralHub.Application.Features.Clients.Commands.CreateClient;
+﻿using CentralHub.Application.Features.Clients.Commands.AddPropertyToClient;
+using CentralHub.Application.Features.Clients.Commands.CreateClient;
 using CentralHub.Application.Features.Clients.Commands.DeleteClient;
 using CentralHub.Application.Features.Clients.Commands.UpdateClient;
 using CentralHub.Application.Features.Clients.Queries.GetAllClients;
@@ -96,6 +97,19 @@ namespace CentralHub.WebAPI.Controllers
 
             // Return a 204 No Content, which is the standard for a successful DELETE
             return NoContent();
+        }
+        // POST /api/clients/{clientId}/properties
+        [HttpPost("{clientId:guid}/properties")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddPropertyToClient(Guid clientId, [FromBody] AddPropertyToClientCommand command)
+        {
+            command.ClientId = clientId;
+            var propertyId = await _mediator.Send(command);
+
+            // We can build a "GetPropertyById" endpoint later. For now, just return the ID.
+            return CreatedAtAction(nameof(GetClientById), new { id = clientId }, new { newPropertyId = propertyId });
         }
     }
 }
