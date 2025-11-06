@@ -1,7 +1,9 @@
 ﻿using CentralHub.Application.Features.Clients.Commands.AddPropertyToClient;
 using CentralHub.Application.Features.Clients.Commands.CreateClient;
 using CentralHub.Application.Features.Clients.Commands.DeleteClient;
+using CentralHub.Application.Features.Clients.Commands.DeleteProperty;
 using CentralHub.Application.Features.Clients.Commands.UpdateClient;
+using CentralHub.Application.Features.Clients.Commands.UpdateProperty;
 using CentralHub.Application.Features.Clients.Queries.GetAllClients;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
 using CentralHub.Application.Interfaces;
@@ -110,6 +112,33 @@ namespace CentralHub.WebAPI.Controllers
 
             // We can build a "GetPropertyById" endpoint later. For now, just return the ID.
             return CreatedAtAction(nameof(GetClientById), new { id = clientId }, new { newPropertyId = propertyId });
+        }
+
+        // PUT /api/clients/{clientId}/properties/{propertyId}
+        [HttpPut("{clientId:guid}/properties/{propertyId:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateProperty(Guid clientId, Guid propertyId, [FromBody] UpdatePropertyCommand command)
+        {
+            // Set the IDs from the route
+            command.ClientId = clientId;
+            command.PropertyId = propertyId;
+
+            await _mediator.Send(command);
+
+            return NoContent(); // Standard for a successful PUT
+        }
+
+        // DELETE /api/clients/{clientId}/properties/{propertyId}
+        [HttpDelete("{clientId:guid}/properties/{propertyId:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProperty(Guid clientId, Guid propertyId)
+        {
+            var command = new DeletePropertyCommand { ClientId = clientId, PropertyId = propertyId };
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

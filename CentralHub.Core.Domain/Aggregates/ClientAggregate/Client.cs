@@ -66,7 +66,20 @@ namespace CentralHub.Core.Domain.Aggregates.ClientAggregate
             _properties.Add(newProperty);
         }
 
-        // Method for removing a property
-        // public void RemoveProperty(Guid propertyId) {  }
+        /// <summary>
+        /// Removes a property from the client.
+        /// </summary>
+        public void RemoveProperty(Guid propertyId)
+        {
+            var propertyToRemove = _properties.FirstOrDefault(p => p.Id == propertyId);
+            if (propertyToRemove is null)
+            {
+                // Fails fast if the property doesn't exist on this client.
+                throw new InvalidOperationException($"Property with ID {propertyId} not found on this client.");
+            }
+
+            _properties.Remove(propertyToRemove);
+        }
     }
+
 }
