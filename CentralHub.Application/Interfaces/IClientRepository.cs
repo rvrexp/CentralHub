@@ -15,8 +15,22 @@ namespace CentralHub.Application.Interfaces
         /// <param name="clientId">The client's unique ID.</param>
         /// <param name="tenantId">The tenant's unique ID.</param>
         /// <returns>The Client aggregate including its Properties, or null if not found.</returns>
-        Task<Client?> GetByIdAsync(Guid clientId, Guid tenantId);
+        Task<ClientDto?> GetByIdAsync(Guid clientId, Guid tenantId);
 
+        /// <summary>
+        /// Retrieves a paginated list of clients for a specific tenant.
+        /// </summary>
+        /// <param name="tenantId">The tenant's unique ID.</param>
+        /// <param name="pageNumber">The page number to retrieve.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <returns>A PagedResult of ClientSummaryDto.</returns>
+        Task<PagedResult<ClientSummaryDto>> GetPagedListAsync(Guid tenantId, int pageNumber, int pageSize);
+
+        /// <summary>
+        /// Finds the full Client aggregate by ID. Use this for CUD  operations.
+        /// </summary>
+        /// <returns>The full Client aggregate or null if not found.</returns>
+        Task<Client?> FindByIdAsync(Guid clientId, Guid tenantId); 
         /// <summary>
         /// Adds a new client aggregate to be tracked by the unit of work.
         /// </summary>
@@ -29,14 +43,6 @@ namespace CentralHub.Application.Interfaces
         // can be added if specific logic beyond simple tracking is needed.
 
 
-        /// <summary>
-        /// Retrieves a paginated list of clients for a specific tenant.
-        /// </summary>
-        /// <param name="tenantId">The tenant's unique ID.</param>
-        /// <param name="pageNumber">The page number to retrieve.</param>
-        /// <param name="pageSize">The number of items per page.</param>
-        /// <returns>A PagedResult of ClientSummaryDto.</returns>
-        Task<PagedResult<ClientSummaryDto>> GetPagedListAsync(Guid tenantId, int pageNumber, int pageSize);
 
     }
 }

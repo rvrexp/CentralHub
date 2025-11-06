@@ -15,17 +15,37 @@ namespace CentralHub.Infrastructure.Data.Repositories
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
-
+        public async Task<Client?> FindByIdAsync(Guid clientId, Guid tenantId)
+        {
+            return await _dbContext.Clients
+                .Include(c => c.Properties)
+                .FirstOrDefaultAsync(c => c.Id == clientId && c.TenantId == tenantId);
+        }
         public async Task AddAsync(Client client)
         {
             await _dbContext.Clients.AddAsync(client);
         }
 
-        public async Task<Client?> GetByIdAsync(Guid clientId, Guid tenantId)
+        public async Task<ClientDto?> GetByIdAsync(Guid clientId, Guid tenantId)
         {
             return await _dbContext.Clients
-                .Include(c => c.Properties) // Eager load Properties
-                .FirstOrDefaultAsync(c => c.Id == clientId && c.TenantId == tenantId); // Tenant check
+                .AsNoTracking() // Read-only query, no need to track changes
+                .Where(c => c.Id == clientId && c.TenantId == tenantId)
+                .Select(client => new ClientDto( // Project directly in the database
+                    client.Id,
+                    client.Name,
+                    client.Email,
+                    client.PhoneNumber,
+                    client.Properties.Select(p => new PropertyDto(
+                        p.Id,
+                        p.Address.Street,
+                        p.Address.City,
+                        p.Address.State,
+                        p.Address.ZipCode,
+                        p.Notes
+                    )).ToList()
+                ))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<PagedResult<ClientSummaryDto>> GetPagedListAsync(Guid tenantId, int pageNumber, int pageSize)
