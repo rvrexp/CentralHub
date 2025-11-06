@@ -1,4 +1,5 @@
 ﻿using CentralHub.Application.Features.Clients.Commands.CreateClient;
+using CentralHub.Application.Features.Clients.Queries.GetAllClients;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
 using CentralHub.Application.Interfaces;
 using MediatR;
@@ -54,6 +55,15 @@ namespace CentralHub.WebAPI.Controllers
             var query = new GetClientByIdQuery(id);
             var client = await _mediator.Send(query); // Dispatches the query
             return Ok(client); // Returns 200 OK with the ClientDto
+        }
+        // GET /api/clients
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllClients([FromQuery] GetAllClientsQuery query)
+        {
+            // The query object will be bound from query string parameters (e.g., ?pageNumber=1&pageSize=10)
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

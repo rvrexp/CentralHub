@@ -1,4 +1,6 @@
-﻿using CentralHub.Core.Domain.Aggregates.ClientAggregate;
+﻿using CentralHub.Application.Common.Models;
+using CentralHub.Application.Features.Clients.DTOs;
+using CentralHub.Core.Domain.Aggregates.ClientAggregate;
 
 namespace CentralHub.Application.Interfaces
 {
@@ -25,5 +27,16 @@ namespace CentralHub.Application.Interfaces
         // Note: Update/Delete operations often leverage the DbContext's change tracking
         // and are implicitly handled when SaveChangesAsync is called. Explicit methods
         // can be added if specific logic beyond simple tracking is needed.
+
+
+        /// <summary>
+        /// Retrieves a paginated list of clients for a specific tenant.
+        /// </summary>
+        /// <param name="tenantId">The tenant's unique ID.</param>
+        /// <param name="pageNumber">The page number to retrieve.</param>
+        /// <param name="pageSize">The number of items per page.</param>
+        /// <returns>A PagedResult of ClientSummaryDto.</returns>
+        Task<PagedResult<ClientSummaryDto>> GetPagedListAsync(Guid tenantId, int pageNumber, int pageSize);
+
     }
 }
