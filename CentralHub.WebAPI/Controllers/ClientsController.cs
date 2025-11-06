@@ -1,21 +1,39 @@
 ﻿using CentralHub.Application.Features.Clients.Commands.CreateClient;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
+using CentralHub.Application.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CentralHub.WebAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ClientsController : ControllerBase
     {
         private readonly IMediator _mediator; // Injects MediatR
+        private readonly ICurrentUserService _currentUser;
 
-        public ClientsController(IMediator mediator)
+        public ClientsController(IMediator mediator, ICurrentUserService currentUserService)
         {
             _mediator = mediator;
+            _currentUser = currentUserService;
         }
-
+        // ---  TEST ENDPOINT ---
+        [HttpGet("my-info")]
+        public IActionResult GetMyInfo()
+        {
+            // This endpoint will read the claims from the JWT
+            // and return them. It proves service works.
+            return Ok(new
+            {
+                Message = "This is a secure endpoint!",
+                _currentUser.UserId,
+                _currentUser.TenantId,
+                _currentUser.Email
+            });
+        }
         // POST /api/clients
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
