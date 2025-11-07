@@ -1,4 +1,5 @@
 ﻿using CentralHub.Application.Features.Accounts.DTOs;
+using CentralHub.Core.Domain.Constants;
 using CentralHub.Core.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -54,8 +55,8 @@ namespace CentralHub.WebAPI.Controllers
                 return BadRequest(new AuthResponseDto { IsSuccess = false, Message = string.Join(", ", errors) });
             }
 
-    
-            // For now, the user's TenantId is the "master key" for their business.
+            // Assign the new user to the "Admin" role by default
+            await _userManager.AddToRoleAsync(newUser, Roles.Admin);
 
             return Ok(new AuthResponseDto { IsSuccess = true, Message = "User registered successfully." });
         }
