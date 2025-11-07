@@ -46,7 +46,7 @@ namespace CentralHub.Application.UnitTests
             var clientId = await _handler.Handle(command, CancellationToken.None);
 
             // 4. Assert
-            // We verify that the methods we expected to be called, were called.
+            // Verify that the methods we expected to be called, were called.
 
             // Verify that AddAsync was called on the repository exactly ONE time
             _mockClientRepository.Verify(
