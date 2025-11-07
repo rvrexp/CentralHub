@@ -16,9 +16,7 @@ namespace CentralHub.Core.Domain.Aggregates.ClientAggregate
 
         private Property() { }
 
-        // Internal factory method to create a valid Property.
-        // The Client Aggregate Root will be responsible for creating properties.
-        internal static Property Create(Address address, string? notes = null)
+        public static Property Create(Address address, string? notes = null)
         {
             return new Property
             {

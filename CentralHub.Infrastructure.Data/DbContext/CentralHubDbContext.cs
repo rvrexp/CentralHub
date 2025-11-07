@@ -13,6 +13,7 @@ namespace CentralHub.Infrastructure.Data.DbContext
 
         // Define DbSets for Aggregate Roots
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Property> Properties { get; set; }
         public DbSet<Job> Jobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,23 +41,31 @@ namespace CentralHub.Infrastructure.Data.DbContext
                 var navigation = client.Metadata.FindNavigation(nameof(Client.Properties));
                 navigation?.SetPropertyAccessMode(PropertyAccessMode.Field); // Use the private '_properties' field
 
-                // *** Configure Owned Entities (Property and Address) ***
-                client.OwnsMany(c => c.Properties, property =>
+                // A Client has many Properties
+                client.HasMany(c => c.Properties)
+                      .WithOne() // A Property doesn't need a nav property back to Client
+                      .HasForeignKey("ClientId")
+                      .OnDelete(DeleteBehavior.Cascade); // If you delete a Client, delete their Properties
+            });
+
+            modelBuilder.Entity<Property>(property =>
+            {
+                property.ToTable("Properties");
+                property.HasKey(p => p.Id);
+
+                // Add a shadow property for the Client foreign key
+                property.Property<Guid>("ClientId").IsRequired();
+                property.HasIndex("ClientId");
+
+                property.Property(p => p.Notes).HasMaxLength(500);
+
+                // Configure the Address Value Object as an owned entity *within* Property
+                property.OwnsOne(p => p.Address, address =>
                 {
-                    property.ToTable("Properties");
-                    property.WithOwner().HasForeignKey("ClientId"); // FK back to Client
-                    property.HasKey(p => p.Id);
-
-                    property.Property(p => p.Notes).HasMaxLength(500);
-
-                    // Configure Address Value Object within Property
-                    property.OwnsOne(p => p.Address, address =>
-                    {
-                        address.Property(a => a.Street).HasColumnName("Address_Street").IsRequired().HasMaxLength(100);
-                        address.Property(a => a.City).HasColumnName("Address_City").IsRequired().HasMaxLength(50);
-                        address.Property(a => a.State).HasColumnName("Address_State").IsRequired().HasMaxLength(50);
-                        address.Property(a => a.ZipCode).HasColumnName("Address_ZipCode").IsRequired().HasMaxLength(10);
-                    });
+                    address.Property(a => a.Street).HasColumnName("Address_Street").IsRequired().HasMaxLength(100);
+                    address.Property(a => a.City).HasColumnName("Address_City").IsRequired().HasMaxLength(50);
+                    address.Property(a => a.State).HasColumnName("Address_State").IsRequired().HasMaxLength(50);
+                    address.Property(a => a.ZipCode).HasColumnName("Address_ZipCode").IsRequired().HasMaxLength(10);
                 });
             });
 

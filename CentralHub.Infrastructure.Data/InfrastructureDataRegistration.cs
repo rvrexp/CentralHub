@@ -19,7 +19,7 @@ namespace CentralHub.Infrastructure.Data
             // Register repositories and Unit of Work (Scoped lifetime is standard)
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+            services.AddScoped<IJobRepository, JobRepository>();
             return services;
         }
     }
