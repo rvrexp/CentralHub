@@ -3,12 +3,13 @@ using CentralHub.Application.Interfaces;
 using CentralHub.Core.Domain.Entities;
 using CentralHub.Infrastructure.Data;
 using CentralHub.Infrastructure.Data.DbContext;
+using CentralHub.Infrastructure.Data.Seeding;
 using CentralHub.WebAPI.Middleware;
 using CentralHub.WebAPI.Services;
-using Microsoft.AspNetCore.Identity;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,5 +86,22 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// --- SEED THE DATABASE ROLES ---
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        await RoleSeeder.SeedRolesAsync(services);
+    }
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred while seeding the database roles.");
+}
+// --- END SEEDING ---
+
 
 app.Run();

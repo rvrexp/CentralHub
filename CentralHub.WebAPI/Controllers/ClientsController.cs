@@ -4,6 +4,7 @@ using CentralHub.Application.Features.Clients.Commands.UpdateClient;
 using CentralHub.Application.Features.Clients.Queries.GetAllClients;
 using CentralHub.Application.Features.Clients.Queries.GetClientById;
 using CentralHub.Application.Interfaces;
+using CentralHub.Core.Domain.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -87,6 +88,8 @@ namespace CentralHub.WebAPI.Controllers
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)] 
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> DeleteClient(Guid id)
         {
             // Create the command with the ID from the route
