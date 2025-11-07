@@ -1,4 +1,5 @@
 ﻿using CentralHub.Core.Domain.Aggregates.ClientAggregate;
+using CentralHub.Core.Domain.Aggregates.JobAggregate;
 using CentralHub.Core.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace CentralHub.Infrastructure.Data.DbContext
 
         // Define DbSets for Aggregate Roots
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Job> Jobs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +59,37 @@ namespace CentralHub.Infrastructure.Data.DbContext
                     });
                 });
             });
+
+            // --- Configuration for Job Aggregate ---
+            modelBuilder.Entity<Job>(job =>
+            {
+                job.ToTable("Jobs");
+                job.HasKey(j => j.Id);
+
+                // Configure TenantId
+                job.Property(j => j.TenantId).IsRequired();
+                job.HasIndex(j => j.TenantId);
+
+                // Configure properties
+                job.Property(j => j.Status).IsRequired();
+                job.Property(j => j.ScheduledStartTime).IsRequired();
+                job.Property(j => j.Notes).HasMaxLength(1000);
+
+                // Configure relationships to Client and Property
+                // A Job belongs to one Client. A Client can have many Jobs.
+                job.HasOne(j => j.Client)
+                    .WithMany() // A Client doesn't need a List<Job>
+                    .HasForeignKey(j => j.ClientId)
+                    .OnDelete(DeleteBehavior.Restrict); // Don't delete a Client if they have Jobs
+
+                // A Job belongs to one Property. A Property can have many Jobs.
+                job.HasOne(j => j.Property)
+                    .WithMany() // A Property doesn't need a List<Job>
+                    .HasForeignKey(j => j.PropertyId)
+                    .OnDelete(DeleteBehavior.Restrict); // Don't delete a Property if it has Jobs
+            });
+
+
             // (Optional but good practice) Customize Identity table names if you don't like "AspNet..."
             modelBuilder.Entity<ApplicationUser>(b => b.ToTable("Users"));
             modelBuilder.Entity<IdentityRole<Guid>>(b => b.ToTable("Roles"));
