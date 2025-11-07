@@ -1,4 +1,6 @@
 ﻿using CentralHub.Application.Features.Jobs.Commands.CreateJob;
+using CentralHub.Application.Features.Jobs.Commands.DeleteJob;
+using CentralHub.Application.Features.Jobs.Commands.UpdateJob;
 using CentralHub.Application.Features.Jobs.Queries.GetJobById;
 using CentralHub.Application.Features.Jobs.Queries.GetJobsForDateRange;
 using CentralHub.Application.Interfaces;
@@ -52,6 +54,28 @@ namespace CentralHub.WebAPI.Controllers
             // Binds from query string: ?startDate=...&endDate=...&pageNumber=1&pageSize=20
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        // PUT /api/jobs/{id}
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateJob(Guid id, [FromBody] UpdateJobCommand command)
+        {
+            command.JobId = id;
+            await _mediator.Send(command);
+            return NoContent();
+        }
+
+        // DELETE /api/jobs/{id}
+        [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteJob(Guid id)
+        {
+            await _mediator.Send(new DeleteJobCommand(id));
+            return NoContent();
         }
     }
 }
