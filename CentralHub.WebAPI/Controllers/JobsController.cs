@@ -1,4 +1,6 @@
 ﻿using CentralHub.Application.Features.Jobs.Commands.CreateJob;
+using CentralHub.Application.Features.Jobs.Queries.GetJobById;
+using CentralHub.Application.Features.Jobs.Queries.GetJobsForDateRange;
 using CentralHub.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -31,11 +33,25 @@ namespace CentralHub.WebAPI.Controllers
             return CreatedAtAction("GetJobById", new { id = jobId }, new { id = jobId });
         }
 
-        // Placeholder for the CreatedAtAction
+        // GET /api/jobs/{id}
         [HttpGet("{id:guid}", Name = "GetJobById")]
-        public IActionResult GetJobById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetJobById(Guid id)
         {
-            return Ok($"Placeholder for GetJobById with ID: {id}");
+            var query = new GetJobByIdQuery(id);
+            var job = await _mediator.Send(query);
+            return Ok(job);
+        }
+
+        // GET /api/jobs
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllJobs([FromQuery] GetJobsForDateRangeQuery query)
+        {
+            // Binds from query string: ?startDate=...&endDate=...&pageNumber=1&pageSize=20
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using CentralHub.Core.Domain.Aggregates.JobAggregate;
+﻿using CentralHub.Application.Common.Models;
+using CentralHub.Application.Features.Jobs.DTOs;
+using CentralHub.Core.Domain.Aggregates.JobAggregate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace CentralHub.Application.Interfaces
         void Delete(Job job);
 
         // --- Query Methods ---
-        // Task<JobDto?> GetByIdAsync(Guid jobId, Guid tenantId);
-        // Task<PagedResult<JobSummaryDto>> GetJobsForDateRangeAsync(...);
+        Task<JobDto?> GetJobByIdAsync(Guid jobId, Guid tenantId);
+        Task<PagedResult<JobSummaryDto>> GetJobsForDateRangeAsync(Guid tenantId, DateTime startDate, DateTime endDate, int pageNumber, int pageSize);
     }
 }
