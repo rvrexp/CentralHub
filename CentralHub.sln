@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9CD41835
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentralHub.Core.Domain.UnitTests", "tests\CentralHub.Core.Domain.UnitTests\CentralHub.Core.Domain.UnitTests.csproj", "{45E1C9D1-2EC8-4ADA-838C-FC96FD13CCE0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FEA8CB62-D956-435C-825D-9A28543AF556}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentralHub.Application.UnitTests", "tests\CentralHub.Application.UnitTests\CentralHub.Application.UnitTests.csproj", "{01020830-540D-480F-A02A-1584453B4614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,10 @@ Global
 		{45E1C9D1-2EC8-4ADA-838C-FC96FD13CCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45E1C9D1-2EC8-4ADA-838C-FC96FD13CCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45E1C9D1-2EC8-4ADA-838C-FC96FD13CCE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01020830-540D-480F-A02A-1584453B4614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01020830-540D-480F-A02A-1584453B4614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01020830-540D-480F-A02A-1584453B4614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01020830-540D-480F-A02A-1584453B4614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +80,8 @@ Global
 		{58498B5B-7AA3-4F64-83E4-F427939851EB} = {DBD11379-DD7D-439D-956D-A0460F02F030}
 		{F42693C1-4A8B-4E99-BB6C-65F44DFE83E7} = {AE71FC93-24F6-44D5-9A5B-FC5FA91BC6F1}
 		{45E1C9D1-2EC8-4ADA-838C-FC96FD13CCE0} = {9CD41835-C9BA-4F42-BB5C-0D4341DADDF4}
+		{FEA8CB62-D956-435C-825D-9A28543AF556} = {9CD41835-C9BA-4F42-BB5C-0D4341DADDF4}
+		{01020830-540D-480F-A02A-1584453B4614} = {FEA8CB62-D956-435C-825D-9A28543AF556}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3E9619B9-AAB9-40DC-8BC7-6EC4F261B3CA}
